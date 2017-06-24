@@ -1,0 +1,18 @@
+#!/bin/bash
+
+echo 'switching directory'
+cd /home/evaluation/backups
+
+echo 'counting backups..'
+numOfBackup=5
+backupCount=`ls | wc -l`
+
+if [ $((backupCount-(numOfBackup-1))) -gt 0 ]
+then
+    find .  -maxdepth 1 -type f -printf '%T@ %p\n' | sort -nr  | tail -$((backupCount-(numOfBackup-1) )) | cut -f2- -d" " | xargs rm -rf 
+fi
+
+backupName=$(date +%W_%m_%Y_%T_%s);
+mysqldump --defaults-extra-file=/home/evaluation/mysqldumppswd wordpress > ${backupName}.sql
+
+echo 'Done'
